@@ -11,7 +11,7 @@ const tab_title: string[] = ["Funding Allocation", "Token Distribution",];
 const chart_List_1: string[] = ["Legal & Regulation: 20%", "Business Development: 15%", "ICO Liquidity: 30%", "Development Team: 15%", "Marketing: 10%", "Cash Reserves: 10%"]
 const chart_List_2: string[] = ["Seed & Private Sale: 10%", "Development Team: 30%", "Presale: 20%", "Staking and Rewards: 25%", "Initial Circulation: 5%",  "Treasury: 10%"]
 let mode=false;
-const ChartArea = () => {
+const ChartArea = ({withdrawLoading,setWithdrawLoading}) => {
 
    const [activeTab, setActiveTab] = useState(0);
 
@@ -40,7 +40,7 @@ const ChartArea = () => {
    return (
       <>
       <section id="chart">
-      <Staking mode={mode}/>
+      <Staking mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
       <div className="chart-area pt-140">
       
          <div className="container">

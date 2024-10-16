@@ -16,15 +16,16 @@ function calculateProgressBarWidth(currentDeposit: string, startingDeposit: stri
    return `${width.toFixed(2)}%`; // Limit to 2 decimal places and add the '%' sign
 }
 
-const Contribution = () => {
+const Contribution = ({withdrawLoading}) => {
    const [deposit, setDeposit] = useState<string>('0');
    const [progressBarWidth, setProgressBarWidth] = useState<string>('0%');
-   const [targetDeposit, setTargetDeposit] = useState<string>('25000'); // replace '100' with your target deposit
-   const [startingDeposit, setStartingDeposit] = useState<string>('2636.30'); // replace '0' with your starting deposit
+   const [targetDeposit, setTargetDeposit] = useState<string>('250000'); // replace '100' with your target deposit
+   const [startingDeposit, setStartingDeposit] = useState<string>('50000'); // replace '0' with your starting deposit
    
    useEffect(() => {
       getBNBDeposit()
           .then(bnbDeposit => {
+
               const totalDeposit = parseFloat(bnbDeposit) + parseFloat(startingDeposit);
               setDeposit(totalDeposit.toLocaleString()); // Format the deposit with commas
               const width = calculateProgressBarWidth(bnbDeposit, startingDeposit, targetDeposit);
@@ -33,7 +34,9 @@ const Contribution = () => {
           .catch(error => {
               console.error('Error getting BNB deposit:', error);
           });
-  }, [startingDeposit, targetDeposit]);
+  }, [startingDeposit, targetDeposit,withdrawLoading]);
+
+ 
  
    return (
      <section id="contribution" className="contribution-area pt-130 pb-130">
@@ -45,8 +48,8 @@ const Contribution = () => {
                   </div>
                   <div className="progress-wrap">
                      <ul className="list-wrap">
-                        <li>Seed-Sale</li>
-                        <li>Private-Sale</li>
+                        <li>Seed & Private-Sale</li>
+                        <li>Presale</li>
                         <li>soft cap</li>
                      </ul>
                      <div className="progress" role="progressbar">

@@ -1,19 +1,24 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import PrivateSaleABI from './NewPrivateSaleABI.json';
+import PresaleAbi from "../constants/presaleAbi.json"  
 import axios from 'axios';
+import { presaleContract } from '@/constants/environment';
+import { bscTestnet } from 'viem/chains';
 
 // The address of the deployed contract
-const contractAddress = '0xc2E2F67d4802824A7093679cf1247CF3276349Ee'; // replace with your contract address
+const contractAddress =  presaleContract //'0xc2E2F67d4802824A7093679cf1247CF3276349Ee'; // replace with your contract address
 
 // The ABI of the contract
-const contractABI: AbiItem[] = PrivateSaleABI;
+const contractABI: AbiItem[] = PresaleAbi;
 
 // Initialize web3 with the URL of your Ethereum node
-const web3 = new Web3('https://rpc.ankr.com/bsc'); // replace with your node URL
+//const web3 = new Web3('https://rpc.ankr.com/bsc'); // replace with your node URL
+
+export const web3 = new Web3(bscTestnet.rpcUrls.default.http[0])
 
 // Create a new contract instance with the contract address and ABI
-const contract = new web3.eth.Contract(contractABI, contractAddress);
+export const contract = new web3.eth.Contract(PresaleAbi, presaleContract.address);
 
 // Function to get the BNB to USD exchange rate
 async function getBNBtoUSDExchangeRate(): Promise<number> {
@@ -30,10 +35,15 @@ async function getBNBtoUSDExchangeRate(): Promise<number> {
 export async function getBNBDeposit(): Promise<string> {
   try {
       const address = '0xCa184fB4C8C0B675A8e457Bb918b78Df1A78a41e';
-      const bnbDepositWei: string = await contract.methods.bnbDeposits(address).call() as string;
+      const bnbDepositWei: string = await contract.methods.tokensSold().call() as string;
+      const price: string = await contract.methods.tokenPrice().call() as string;
+
       const bnbDeposit = Number(web3.utils.fromWei(bnbDepositWei, 'ether'));
+      const priceE = Number(web3.utils.fromWei(price, 'ether'));
+      console.log("progress bar width",bnbDeposit,priceE)
       const exchangeRate = await getBNBtoUSDExchangeRate();
-      const usdDeposit = (bnbDeposit * exchangeRate).toFixed(2);
+      const usdDeposit = (bnbDeposit  / priceE).toFixed(2);
+   
       return usdDeposit;
   } catch (error) {
       console.error('Error getting BNB deposit:', error);

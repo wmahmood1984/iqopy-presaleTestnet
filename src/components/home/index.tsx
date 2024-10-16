@@ -1,3 +1,6 @@
+"use client"; 
+
+import { useState } from "react";
 import Banner from "./Banner";
 import Brand from "./Brand";
 import ChartArea from "./ChartArea";
@@ -10,18 +13,20 @@ import RoadMapArea from "./RoadMapArea";
 import Team from "./Team";
 
 const Home = () => {
+   const [withdrawLoading, setWithdrawLoading] = useState(false);
+   
    return (
       <>
          <Banner />
-         <Contribution />
+         <Contribution  withdrawLoading={withdrawLoading}/>
          <Brand />
-         {/* <FeatureOne /> */}
-         {/* <FeatureTwo /> */}
-         {/* <ChartArea /> */}
+         <FeatureOne  />
+         <FeatureTwo />
+         <ChartArea withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
          <RoadMapArea />
-         {/* <Team /> */}
-         {/* <FAQ /> */}
-         {/* <DownloadArea /> */}
+         <Team />
+         <FAQ />
+         <DownloadArea />
       </>
    )
 }

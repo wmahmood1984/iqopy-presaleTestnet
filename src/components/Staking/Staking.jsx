@@ -25,6 +25,7 @@ import {
   // kafaStaking,
   iqopyStaking,
   airdropContract,
+  presaleContract,
 } from "../../constants/environment";
 import {
   writeContract,
@@ -32,6 +33,7 @@ import {
   waitForTransactionReceipt,
 } from "@wagmi/core";
 import { formatEther } from "viem";
+import { contract } from "@/ui/SmartContractDeposits";
 
 const hoverStyle = {
   "&:hover": {
@@ -50,26 +52,44 @@ const columns = [
   },
   {
     id: "AmountWithdrawn",
-    label: "Amount Withdrawn",
+    label: "Tokens Withdrawn",
     minWidth: 200,
     align: "center",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
     id: "WithdrawableAmount",
-    label: "Withdrawable Amount",
+    label: "Withdrawable Tokens",
+    minWidth: 200,
+    align: "center",
+  },
+  {
+    id: "WithdrawnReward",
+    label: "Reward Withdrawn",
+    minWidth: 200,
+    align: "center",
+  },
+  {
+    id: "WithdrawableReward",
+    label: "Withdrawable Reward",
+    minWidth: 200,
+    align: "center",
+  },
+  {
+    id: "WithdrawReward",
+    label: "Withdraw Reward",
     minWidth: 200,
     align: "center",
   },
   {
     id: "Withdraw",
-    label: "Withdraw",
+    label: "Unlock Tokens",
     minWidth: 200,
     align: "center",
   },
 ];
 
-const Staking = ({ mode }) => {
+const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
   const color = mode ? "#b99a45" : "#E0F7FA";
   const [notificationProps, setnotificationProps] = useState({
     error: "",
@@ -77,7 +97,7 @@ const Staking = ({ mode }) => {
     modal: false,
   });
   const [loading, setLoading] = useState(false);
-  const [withdrawLoading, setWithdrawLoading] = useState(false);
+
   const [unstakedLoading, setUnstakedLoading] = useState(false);
   const config = useConfig();
   const { open } = useWeb3Modal();
@@ -86,6 +106,18 @@ const Staking = ({ mode }) => {
   const [usersAirdrops, setUsersAirdrops] = useState(0);
   const [stakingDetails, setStakingDetails] = useState([]);
   const [withdrawableAmount, setWithdrwableAmount] = useState(0);
+  const [stakingDetails2,setStakingdetails2] = useState()
+
+  const init2 = async ()=>{
+
+    try {
+      const _stakingDetails = await contract.methods.getUserPurchase(address).call()
+      setStakingdetails2(_stakingDetails)
+    } catch (error) {
+      console.log("error in init2",error)
+    }
+  }
+
 
   const stakeTokens = async () => {
     try {
@@ -148,8 +180,35 @@ const Staking = ({ mode }) => {
     try {
       setWithdrawLoading(true);
       let withdrawHash = await writeContract(config, {
-        ...iqopyStaking,
+        ...presaleContract,
         functionName: "withdraw",
+        args: [index]
+      });
+      await waitForTransactionReceipt(config, { hash: withdrawHash });
+      setnotificationProps({
+        modal: true,
+        error: false,
+        message: "Withdrawal successfully completed.",
+      });
+      setWithdrawLoading(false);
+    } catch (error) {
+      setWithdrawLoading(false);
+      setnotificationProps({
+        modal: true,
+        error: true,
+        message: error.message,
+      });
+      console.log("error", error);
+    }
+  };
+
+  const withdrawReward = async (index) => {
+    try {
+      setWithdrawLoading(true);
+      let withdrawHash = await writeContract(config, {
+        ...presaleContract,
+        functionName: "withdrawReward",
+        args: [index]
       });
       await waitForTransactionReceipt(config, { hash: withdrawHash });
       setnotificationProps({
@@ -209,13 +268,29 @@ const Staking = ({ mode }) => {
       console.log(error);
     }
   };
-  console.log("usersAirdrops", usersAirdrops);
-  console.log("userBalance", userBalance);
-  console.log("stakingDetails", stakingDetails);
+
+
+  console.log("staking Details",stakingDetails2)
+
+  const [started,setStarted] = useState(false)
+
 
   useEffect(() => {
-    init();
-  }, [address]);
+    var interval = setInterval(() => {
+      init();
+      init2()      
+    }, 60000);
+
+    if(!started){
+      init2()
+      setStarted(true)
+    }
+
+
+    return ()=>{clearInterval(interval)}
+    
+
+  }, [address,withdrawLoading]);
 
   const [startTime, withdrawnAmount] = stakingDetails;
 
@@ -225,57 +300,14 @@ const Staking = ({ mode }) => {
         notificationProps={notificationProps}
         setnotificationProps={setnotificationProps}
       />
-      <Container maxWidth="md">
+      {/* <Container maxWidth="md">
         <Typography variant="h2" textAlign="center">
           Staking
         </Typography>
         <Divider color={color} sx={{ mt: "10px" }} />
         <Grid container sx={{ mt: "10px" }} spacing={4}>
           <Grid item xs={12} md={6}>
-            {/* <TextField
-              fullWidth
-              label="Airdrop balance"
-              value={formatEther(usersAirdrops)}
-              focused
-              InputProps={{
-                sx: {
-                  color: color,
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                },
-              }}
-              InputLabelProps={{
-                sx: {
-                  color: color,
-                  "&.Mui-focused": {
-                    color: color,
-                  },
-                },
-              }}
-              sx={{
-                "& label.Mui-focused": {
-                  color: color,
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: color,
-                  },
-                  "&:hover fieldset": {
-                    borderColor: color,
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: color,
-                  },
-                },
-              }}
-            /> */}
+          
             <Box
               sx={{
                 mb: 3,
@@ -305,50 +337,7 @@ const Staking = ({ mode }) => {
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <TextField
-              fullWidth
-              label="User balance"
-              focused
-              value={formatEther(userBalance)}
-              InputProps={{
-                sx: {
-                  color: color,
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: color,
-                  },
-                },
-              }}
-              InputLabelProps={{
-                sx: {
-                  color: color,
-                  "&.Mui-focused": {
-                    color: color,
-                  },
-                },
-              }}
-              sx={{
-                "& label.Mui-focused": {
-                  color: color,
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: color,
-                  },
-                  "&:hover fieldset": {
-                    borderColor: color,
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: color,
-                  },
-                },
-              }}
-            /> */}
+          
             <Box
               sx={{
                 mb: 3,
@@ -424,7 +413,7 @@ const Staking = ({ mode }) => {
             </Stack>
           </Grid>
         </Grid>
-      </Container>
+      </Container> */}
       <Paper
         sx={{
           width: "100%",
@@ -438,7 +427,7 @@ const Staking = ({ mode }) => {
       >
         <Box my={4}>
           <Typography fontWeight="600" mb={1} variant="h2" textAlign="center">
-            Deposit Details
+            Token Lock Details
           </Typography>
         </Box>
         <TableContainer
@@ -480,20 +469,29 @@ const Staking = ({ mode }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Number(stakingDetails[0]) > 0 ? (
-                <TableRow>
+
+              {stakingDetails2 ? stakingDetails2.map((v,e)=>
+              <TableRow>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
-                    {moment.unix(Number(startTime)).format("lll")}
+                    {moment.unix(Number(v.tokenLockTime)).format("lll")}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
-                    {formatEther(usersAirdrops + userBalance)}
+                    {formatEther(v.buyToken)}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
-                    &nbsp;{getCommas(formatEther(withdrawnAmount))}
+                    &nbsp;{getCommas(formatEther(v.TokensUnlocked))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(withdrawableAmount))}
+                    {getCommas(formatEther(v.unLockableTokens))}
+                  </TableCell>
+                  <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
+                    &nbsp;
+                    {getCommas(formatEther(v.rewardWithdrawn))}
+                  </TableCell>
+                  <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
+                    &nbsp;
+                    {getCommas(formatEther(v.rewardEarned))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     <LoadingButton
@@ -516,17 +514,49 @@ const Staking = ({ mode }) => {
                         fontSize: "10px",
                       }}
                       color="primary"
-                      onClick={address ? () => withdrawTokens() : open}
+                      onClick={address ? () => withdrawReward(e) : open}
                     >
                       {address
                         ? withdrawLoading
                           ? "Processing"
-                          : "Withdraw"
+                          : "Withdraw Reward"
                         : "Connect Wallet"}
                     </LoadingButton>
+                  
                   </TableCell>
+                  <TableCell>
+                  <LoadingButton
+                      variant="contained"
+                      loading={withdrawLoading}
+                      disabled={withdrawLoading}
+                      loadingPosition="end"
+                      sx={{
+                        backgroundColor: "#ffffff",
+                        color: "#000000",
+                        ...hoverStyle,
+                        fontSize: "15px",
+                        fontWeight: 600,
+                        transition: "background 0.3s",
+                        px: "30px",
+                        py: "10px",
+                        mt: "20px",
+                        maxWidth: "150px",
+                        borderRadius: "22px",
+                        fontSize: "10px",
+                      }}
+                      color="primary"
+                      onClick={address ? () => withdrawTokens(e) : open}
+                    >
+                      {address
+                        ? withdrawLoading
+                          ? "Processing"
+                          : "Withdraw Tokens"
+                        : "Connect Wallet"}
+                    </LoadingButton>
+
+                    </TableCell>
                 </TableRow>
-              ) : (
+              ): (
                 <TableRow>
                   <TableCell
                     sx={{ color: mode ? "#b99a45" : "#ffffff" }}
