@@ -16,7 +16,13 @@ function calculateProgressBarWidth(currentDeposit: string, startingDeposit: stri
    return `${width.toFixed(2)}%`; // Limit to 2 decimal places and add the '%' sign
 }
 
-const Contribution = ({withdrawLoading}) => {
+interface ContributionProps {
+   //  mode: string; // Replace 'string' with the specific type if it's not always a string
+     withdrawLoading: boolean;
+//     setWithdrawLoading: React.Dispatch<React.SetStateAction<boolean>>;
+   }
+
+const Contribution: React.FC<ContributionProps> = ({withdrawLoading}) => {
    const [deposit, setDeposit] = useState<string>('0');
    const [progressBarWidth, setProgressBarWidth] = useState<string>('0%');
    const [targetDeposit, setTargetDeposit] = useState<string>('250000'); // replace '100' with your target deposit

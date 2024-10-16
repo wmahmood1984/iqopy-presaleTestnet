@@ -11,7 +11,16 @@ const tab_title: string[] = ["Funding Allocation", "Token Distribution",];
 const chart_List_1: string[] = ["Legal & Regulation: 20%", "Business Development: 15%", "ICO Liquidity: 30%", "Development Team: 15%", "Marketing: 10%", "Cash Reserves: 10%"]
 const chart_List_2: string[] = ["Seed & Private Sale: 10%", "Development Team: 30%", "Presale: 20%", "Staking and Rewards: 25%", "Initial Circulation: 5%",  "Treasury: 10%"]
 let mode=false;
-const ChartArea = ({withdrawLoading,setWithdrawLoading}) => {
+
+interface ChartAreaProps {
+ //  mode: string; // Replace 'string' with the specific type if it's not always a string
+   withdrawLoading: boolean;
+   setWithdrawLoading: React.Dispatch<React.SetStateAction<boolean>>;
+ }
+
+
+
+const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoading }) => {
 
    const [activeTab, setActiveTab] = useState(0);
 

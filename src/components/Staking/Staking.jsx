@@ -471,7 +471,7 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
             <TableBody>
 
               {stakingDetails2 ? stakingDetails2.map((v,e)=>
-              <TableRow>
+              <TableRow key={e}>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     {moment.unix(Number(v.tokenLockTime)).format("lll")}
                   </TableCell>

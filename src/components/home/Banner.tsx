@@ -7,8 +7,14 @@ import bannerShape_2 from "@/assets/img/banner/banner_shape02.png";
 
 import PresaleTabs from "@/components/Presale/PresaleTabs";
 
+interface BannerProps {
+   //mode: string; // Replace 'string' with the specific type if it's not always a string
+   withdrawLoading: boolean;
+   setWithdrawLoading: React.Dispatch<React.SetStateAction<boolean>>;
+ }
+
 let mode = false
-const Banner = ({ mode,withdrawLoading,setWithdrawLoading }) => {
+const Banner: React.FC<BannerProps> = ({withdrawLoading, setWithdrawLoading }) => {
    
    return (
       <section  className="banner-area banner-bg" style={{ backgroundImage: `url(/assets/img/banner/banner_bg.png)` }}>
