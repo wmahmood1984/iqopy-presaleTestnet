@@ -40,7 +40,7 @@ const feature_data: DataType[] = [
    },
 ]
  let mode= false;
-const FeatureOne = ({withdrawLoading,setWithdrawLoading}) => {
+const FeatureOne = () => {
    return (
       <>
      
