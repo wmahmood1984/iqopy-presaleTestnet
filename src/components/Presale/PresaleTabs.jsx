@@ -4,7 +4,7 @@ import PrivateSale from "./PrivateSale";
 import Balance from "./Balance";
 // import PhasesInfo from "./PhasesInfo";
 
-const PresaleTabs = ({ mode }) => {
+const PresaleTabs = ({ mode,withdrawLoading,setWithdrawLoading }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -12,7 +12,7 @@ const PresaleTabs = ({ mode }) => {
   };
 
   const tabContent = [
-    <PrivateSale key="privateSale" mode={mode} />,
+    <PrivateSale key="privateSale" mode={mode} loading={withdrawLoading} setloading={setWithdrawLoading} />,
     <Balance key="balance" mode={mode} />,
   ];
 

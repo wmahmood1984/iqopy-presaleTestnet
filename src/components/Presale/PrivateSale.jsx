@@ -23,7 +23,7 @@ import {
   readContract,
 } from "@wagmi/core";
 import CommonButton from "../CommonButton";
-const PrivateSale = ({ mode }) => {
+const PrivateSale = ({ mode,loading,setloading }) => {
   const { address, isConnected, chain } = useAccount();
   const { open } = useWeb3Modal();
   const { switchChain } = useSwitchChain();
@@ -31,7 +31,7 @@ const PrivateSale = ({ mode }) => {
   const [wbamount, setwbamount] = useState("");
   const [onebnb, setonebnb] = useState("");
   const [onebusd, setOneBUSD] = useState("");
-  const [loading, setloading] = useState(false);
+//  const [loading, setloading] = useState(false);
   const config = useConfig();
   const [notificationProps, setnotificationProps] = useState({
     error: "",
@@ -114,59 +114,144 @@ const PrivateSale = ({ mode }) => {
     onchangehendler();
   }, [amount, slect]);
 
+  // const buytokens = async () => {
+  //   if (!amount || isNaN(amount) || amount < 0 || amount === 0) {
+  //     setnotificationProps({
+  //       ...notificationProps,
+  //       modal: true,
+  //       error: true,
+  //       message: "Please enter a valid amount.",
+  //     });
+  //   } else {
+  //     try {
+  //       setloading(true);
+  //       console.log("amountCD", amount);
+  //       if (slect == "BNB") {
+  //         let buyHash = await writeContract(config, {
+  //           ...presaleContract,
+  //           functionName: "buyTokenBNB",
+  //           value: parseUnits(amount.toString(), 18),
+  //         });
+  //         await waitForTransactionReceipt(config, { hash: buyHash });
+  //       } else {
+  //         let approveHash = await writeContract(config, {
+  //           ...usdtContract,
+  //           functionName: "approve",
+  //           args: [presaleContract.address, parseUnits(amount.toString(), 18)],
+  //         });
+  //         await waitForTransactionReceipt(config, { hash: approveHash });
+  //         let buyHash = await writeContract(config, {
+  //           ...presaleContract,
+  //           functionName: "buyTokenbusd",
+  //           args: [parseUnits(amount.toString(), 18)],
+  //         });
+  //         await waitForTransactionReceipt(config, { hash: buyHash });
+  //       }
+  //       setnotificationProps({
+  //         ...notificationProps,
+  //         modal: true,
+  //         error: false,
+  //         message: "Purchase successfuly completed.",
+  //       });
+  //       setloading(false);
+  //     } catch (error) {
+  //       setloading(false);
+  //       setnotificationProps({
+  //         ...notificationProps,
+  //         modal: true,
+  //         error: true,
+  //         message: error.message,
+  //       });
+  //       console.log("e", error);
+  //     }
+  //   }
+  // };
+
+
   const buytokens = async () => {
-    if (!amount || isNaN(amount) || amount < 0 || amount === 0) {
+    if (!amount || isNaN(amount) || amount <= 0) {
       setnotificationProps({
         ...notificationProps,
         modal: true,
         error: true,
         message: "Please enter a valid amount.",
       });
-    } else {
-      try {
-        setloading(true);
-        console.log("amountCD", amount);
-        if (slect == "BNB") {
-          let buyHash = await writeContract(config, {
-            ...presaleContract,
-            functionName: "buyTokenBNB",
-            value: parseUnits(amount.toString(), 18),
+      return;
+    }
+  
+    try {
+      setloading(true);
+      console.log("amountCD", amount);
+  
+      if (slect === "BNB") {
+        // Buy using BNB
+        const buyHash = await writeContract(config, {
+          ...presaleContract,
+          functionName: "buyTokenBNB",
+          value: parseUnits(amount.toString(), 18),
+        });
+        const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
+        
+        if (receipt.status) {
+          setnotificationProps({
+            ...notificationProps,
+            modal: true,
+            error: false,
+            message: "Purchase successfully completed with BNB.",
           });
-          await waitForTransactionReceipt(config, { hash: buyHash });
         } else {
-          let approveHash = await writeContract(config, {
-            ...usdtContract,
-            functionName: "approve",
-            args: [presaleContract.address, parseUnits(amount.toString(), 18)],
+          setnotificationProps({
+            ...notificationProps,
+            modal: true,
+            error: true,
+            message: "Transaction failed during BNB purchase.",
           });
-          await waitForTransactionReceipt(config, { hash: approveHash });
-          let buyHash = await writeContract(config, {
-            ...presaleContract,
-            functionName: "buyTokenbusd",
-            args: [parseUnits(amount.toString(), 18)],
-          });
-          await waitForTransactionReceipt(config, { hash: buyHash });
         }
-        setnotificationProps({
-          ...notificationProps,
-          modal: true,
-          error: false,
-          message: "Purchase successfuly completed.",
+      } else {
+        // Buy using USDT
+        const approveHash = await writeContract(config, {
+          ...usdtContract,
+          functionName: "approve",
+          args: [presaleContract.address, parseUnits(amount.toString(), 18)],
         });
-        setloading(false);
-      } catch (error) {
-        setloading(false);
-        setnotificationProps({
-          ...notificationProps,
-          modal: true,
-          error: true,
-          message: error.message,
+        await waitForTransactionReceipt(config, { hash: approveHash });
+  
+        const buyHash = await writeContract(config, {
+          ...presaleContract,
+          functionName: "buyTokenbusd",
+          args: [parseUnits(amount.toString(), 18)],
         });
-        console.log("e", error);
+        const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
+  
+        if (receipt.status) {
+          setnotificationProps({
+            ...notificationProps,
+            modal: true,
+            error: false,
+            message: "Purchase successfully completed with USDT.",
+          });
+        } else {
+          setnotificationProps({
+            ...notificationProps,
+            modal: true,
+            error: true,
+            message: "Transaction failed during USDT purchase.",
+          });
+        }
       }
+    } catch (error) {
+      setnotificationProps({
+        ...notificationProps,
+        modal: true,
+        error: true,
+        message: error.message || "An error occurred during the purchase.",
+      });
+      console.log("Error:", error);
+    } finally {
+      setloading(false); // Ensure loading is turned off after transaction is processed
     }
   };
-
+  
   return (
     <div>
       <NotificationModal

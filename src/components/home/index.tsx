@@ -14,10 +14,12 @@ import Team from "./Team";
 
 const Home = () => {
    const [withdrawLoading, setWithdrawLoading] = useState(false);
+
+   console.log("loading",withdrawLoading)
    
    return (
       <>
-         <Banner />
+         <Banner withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
          <Contribution  withdrawLoading={withdrawLoading}/>
          <Brand />
          <FeatureOne  />

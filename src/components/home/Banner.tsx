@@ -8,7 +8,7 @@ import bannerShape_2 from "@/assets/img/banner/banner_shape02.png";
 import PresaleTabs from "@/components/Presale/PresaleTabs";
 
 let mode = false
-const Banner = () => {
+const Banner = ({ mode,withdrawLoading,setWithdrawLoading }) => {
    
    return (
       <section  className="banner-area banner-bg" style={{ backgroundImage: `url(/assets/img/banner/banner_bg.png)` }}>
@@ -17,7 +17,7 @@ const Banner = () => {
                <div className="col-lg-10">
                   <div className="banner-content ">
                   
-                      <PresaleTabs mode={mode}/>
+                      <PresaleTabs mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
                      
                   </div>
                  
