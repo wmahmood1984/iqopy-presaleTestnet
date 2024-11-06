@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Staking from "@/components/Staking/Staking";
 
 import chartImg from "@/assets/img/images/chart_img.png"
+import ReferralPanel from './ReferralPanel';
 
 const tab_title: string[] = ["Funding Allocation", "Token Distribution",];
 const chart_List_1: string[] = ["Legal & Regulation: 20%", "Business Development: 15%", "ICO Liquidity: 30%", "Development Team: 15%", "Marketing: 10%", "Cash Reserves: 10%"]
@@ -50,6 +51,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoadin
       <>
       <section id="chart">
       <Staking mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
+      <ReferralPanel/>
       <div className="chart-area pt-140">
       
          <div className="container">

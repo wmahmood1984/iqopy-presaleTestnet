@@ -10,6 +10,7 @@ import FAQ from "./Faq";
 import FeatureOne from "./FeatureOne";
 import FeatureTwo from "./FeatureTwo";
 import RoadMapArea from "./RoadMapArea";
+import ReferralPanel from "./ReferralPanel";
 import Team from "./Team";
 import { useSearchParams } from 'next/navigation';
 
@@ -27,6 +28,7 @@ const Home = () => {
          <FeatureOne  />
          <FeatureTwo />
          <ChartArea withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
+         
          <RoadMapArea />
          <Team />
          <FAQ />
