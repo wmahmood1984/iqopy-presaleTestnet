@@ -12,6 +12,7 @@ import NotificationModal from "../NotificationModal/NotificationModal";
 
 import {
   ActiveChain,
+  owner,
   presaleContract,
   tokenContract,
   usdtContract,
@@ -23,7 +24,8 @@ import {
   readContract,
 } from "@wagmi/core";
 import CommonButton from "../CommonButton";
-const PrivateSale = ({ mode,loading,setloading }) => {
+const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
+  console.log("presaletab",referralCode)
   const { address, isConnected, chain } = useAccount();
   const { open } = useWeb3Modal();
   const { switchChain } = useSwitchChain();
@@ -185,10 +187,12 @@ const PrivateSale = ({ mode,loading,setloading }) => {
   
       if (slect === "BNB") {
         // Buy using BNB
+        const args = referralCode? referralCode : owner
         const buyHash = await writeContract(config, {
           ...presaleContract,
           functionName: "buyTokenBNB",
           value: parseUnits(amount.toString(), 18),
+          args:[args],
         });
         const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
         

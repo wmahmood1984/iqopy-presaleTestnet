@@ -11,15 +11,17 @@ import FeatureOne from "./FeatureOne";
 import FeatureTwo from "./FeatureTwo";
 import RoadMapArea from "./RoadMapArea";
 import Team from "./Team";
+import { useSearchParams } from 'next/navigation';
 
 const Home = () => {
    const [withdrawLoading, setWithdrawLoading] = useState(false);
+   const searchParams = useSearchParams();
+   const referralCode = searchParams.get('referralCode');
 
-   console.log("loading",withdrawLoading)
    
    return (
       <>
-         <Banner withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
+         <Banner withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading} referralCode={referralCode}/>
          <Contribution  withdrawLoading={withdrawLoading}/>
          <Brand />
          <FeatureOne  />

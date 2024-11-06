@@ -479,19 +479,19 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
                     {formatEther(v.buyToken)}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
-                    &nbsp;{getCommas(formatEther(v.TokensUnlocked))}
+                    &nbsp;{getCommas(formatEther(v.unlockTokenAmount))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(v.unLockableTokens))}
+                    {getCommas(formatEther(v.unlockTokenAmount))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(v.rewardWithdrawn))}
+                    {getCommas(formatEther(v.rewardDistributed))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(v.rewardEarned))}
+                    {getCommas(formatEther(v.rewardEligibility))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     <LoadingButton

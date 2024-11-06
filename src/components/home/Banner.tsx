@@ -11,10 +11,11 @@ interface BannerProps {
    //mode: string; // Replace 'string' with the specific type if it's not always a string
    withdrawLoading: boolean;
    setWithdrawLoading: React.Dispatch<React.SetStateAction<boolean>>;
+   referralCode:any;
  }
 
 let mode = false
-const Banner: React.FC<BannerProps> = ({withdrawLoading, setWithdrawLoading }) => {
+const Banner: React.FC<BannerProps> = ({withdrawLoading, setWithdrawLoading,referralCode }) => {
    
    return (
       <section  className="banner-area banner-bg" style={{ backgroundImage: `url(/assets/img/banner/banner_bg.png)` }}>
@@ -23,7 +24,7 @@ const Banner: React.FC<BannerProps> = ({withdrawLoading, setWithdrawLoading }) =
                <div className="col-lg-10">
                   <div className="banner-content ">
                   
-                      <PresaleTabs mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
+                      <PresaleTabs mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading} referralCode={referralCode}/>
                      
                   </div>
                  

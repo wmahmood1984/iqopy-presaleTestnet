@@ -7,13 +7,15 @@ import { http, createConfig } from "@wagmi/core";
 import { bscTestnet } from "@wagmi/core/chains";
 
 export const presaleContract = {
-  address: "0x8b147E1Bdc47B5187726eA2e3D6E3ae77ac39625", //testnet
+  address: "0xA1bc238DeAE92Bd00F73C39AD6Cc1436cB348aA4", //testnet
   abi: presaleAbi,
 };
 export const airdropContract = {
   address: "0x7D7Cbf826C00920F58bED2eDB9af5cE781f7eD2A", //testnet
   abi: airdropAbi,
 };
+
+export const owner = "0x34F60988257c3895C0552014882e4dab4916baE7"
 
 export const kafaStaking = {
   address: "0x665e6346C5118d342894a94BA08874661071Aa09", //testnet

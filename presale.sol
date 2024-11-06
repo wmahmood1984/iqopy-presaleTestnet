@@ -129,7 +129,8 @@ interface IToken {
         returns (bool);
 
     function decimals() external view returns (uint8);
-    function approve(address _spender, uint _amount) external returns(bool);
+
+    function approve(address _spender, uint256 _amount) external returns (bool);
 }
 
 interface AggregatorV3Interface {
@@ -149,10 +150,15 @@ contract IQpoyPresale is Ownable {
     IToken public token;
     //IToken public BUSD;
 
+    mapping(address => uint256) public bnbReferralRewards;
+    uint256 public totalBNBOwedToReferrers;
+
     AggregatorV3Interface public priceFeedbnb;
 
     uint256 public amountRaisedBNB;
     uint256 public amountRaisedBUSD;
+    uint256 public rewardLimit = 200000000 * (10**18);
+    uint256 public rewardDistributed;
 
     uint256 public tokenPrice;
     uint256 public tokensSold;
@@ -214,26 +220,89 @@ contract IQpoyPresale is Ownable {
         return token.allowance(owner(), address(this));
     }
 
-    function buyTokenBNB() external payable {
+    function buyTokenBNB(address referrer) external payable {
         require(presaleActive, "Presale is not active");
-        require(msg.value > 0, "valud amount");
+        require(msg.value > 0, "Invalid amount");
         uint256 numberOfTokens = bnbToToken(msg.value);
+        uint256 tokenValue = tokenForSale();
+        require(tokenValue >= numberOfTokens, "Insufficient tokens for sale");
+
+        tokensSold += numberOfTokens;
+        amountRaisedBNB += msg.value;
+
+        // Record the buyer's purchase with vesting details
+        UserInfo memory newPurchase = UserInfo(
+            numberOfTokens,
+            0,
+            block.timestamp,
+            0,
+            0
+        );
+        userPurchases[msg.sender].push(newPurchase);
+        userBalance[msg.sender] += numberOfTokens;
+
+        emit Sell(msg.sender, numberOfTokens);
+
+        // Handle referral rewards
+        if (referrer != address(0) && referrer != msg.sender) {
+            uint256 bnbReferralReward = (msg.value * 5) / 100;
+            uint256 tokenReferralReward = (numberOfTokens * 5) / 100;
+
+            // Update BNB referral rewards
+            bnbReferralRewards[referrer] += bnbReferralReward;
+            totalBNBOwedToReferrers += bnbReferralReward;
+
+            // Record the referrer's token reward with vesting details
+            UserInfo memory referrerReward = UserInfo(
+                tokenReferralReward,
+                0,
+                block.timestamp,
+                0,
+                0
+            );
+            userPurchases[referrer].push(referrerReward);
+            userBalance[referrer] += tokenReferralReward;
+        }
+    }
+
+    function withdrawBNBReferralRewards() external {
+        uint256 reward = bnbReferralRewards[msg.sender];
+        require(reward > 0, "No BNB rewards to withdraw");
+        bnbReferralRewards[msg.sender] = 0;
+        totalBNBOwedToReferrers -= reward;
+        payable(msg.sender).transfer(reward);
+    }
+
+    function privateSale(uint256 numberOfTokens, address _user)
+        public
+        onlyOwner
+    {
         uint256 tokenValue = tokenForSale();
         require(tokenValue >= numberOfTokens, "Insufficient tokens for sale");
 
         tokensSold += numberOfTokens;
         //token.transferFrom(owner(), msg.sender, numberOfTokens);
 
-        emit Sell(msg.sender, numberOfTokens);
+        emit Sell(_user, numberOfTokens);
 
         UserInfo memory newPurchase = UserInfo(
             numberOfTokens,
             0,
             block.timestamp,
-            0,0
+            0,
+            0
         );
-        userPurchases[msg.sender].push(newPurchase);
-        userBalance[msg.sender] += numberOfTokens;
+        userPurchases[_user].push(newPurchase);
+        userBalance[_user] += numberOfTokens;
+    }
+
+    function bulkPrivateSale(
+        uint256[] memory _numbers,
+        address[] memory _addresses
+    ) public onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            privateSale(_numbers[i], _addresses[i]);
+        }
     }
 
     // function buyTokenbusd(uint256 _amount) public {
@@ -325,42 +394,40 @@ contract IQpoyPresale is Ownable {
     function getUserPurchase(address _user)
         public
         view
-        returns (
-           UserInfo[] memory 
-        )
+        returns (UserInfo[] memory)
     {
-        UserInfo[] memory userInfo = new UserInfo[](userPurchases[_user].length);
+        UserInfo[] memory userInfo = new UserInfo[](
+            userPurchases[_user].length
+        );
 
-        for(uint i = 0; i < userPurchases[_user].length; i ++){
+        for (uint256 i = 0; i < userPurchases[_user].length; i++) {
             userInfo[i] = UserInfo(
                 userPurchases[_user][i].buyToken,
                 userPurchases[_user][i].unlockTokenAmount,
                 userPurchases[_user][i].tokenLockTime,
                 userPurchases[_user][i].rewardDistributed,
-                calcStake(_user,i)
-
+                calcStake(_user, i)
             );
         }
 
         return userInfo;
-    
     }
 
-    function withdrawReward(uint _index) public {
+    function withdrawReward(uint256 _index) public {
         address _user = msg.sender;
-        uint numberOfTokens = calcStake(_user, _index) - userPurchases[_user][_index].rewardDistributed;
-        token.transferFrom(owner(), _user, numberOfTokens);
-        userPurchases[_user][_index].rewardDistributed+=numberOfTokens;
+        uint256 numberOfTokens = calcStake(_user, _index) -
+            userPurchases[_user][_index].rewardDistributed;
+        if ((rewardDistributed) > rewardLimit) {
+            return;
+        } else if ((rewardDistributed + numberOfTokens) > rewardLimit) {
+            token.transferFrom(owner(), _user, rewardLimit - rewardDistributed);
+            userPurchases[_user][_index].rewardDistributed += (rewardLimit -
+                rewardDistributed);
+        } else {
+            token.transferFrom(owner(), _user, numberOfTokens);
+            userPurchases[_user][_index].rewardDistributed += numberOfTokens;
+        }
     }
-
-    function withdraw(uint _index) public {
-        address _user = msg.sender;
-        uint numberOfTokens = calcStake(_user, _index) - userPurchases[_user][_index].rewardDistributed;
-        token.transferFrom(owner(), _user, numberOfTokens);
-        userPurchases[_user][_index].rewardDistributed+=numberOfTokens;
-    }
-
-  
 
     function getUserPurchaseCount(address _user)
         external
@@ -371,8 +438,15 @@ contract IQpoyPresale is Ownable {
     }
 
     function withdrawBNB(uint256 amount) external onlyOwner {
-        require(amount <= address(this).balance, "Insufficient balance");
+        uint256 availableBNB = address(this).balance - totalBNBOwedToReferrers;
+        require(amount <= availableBNB, "Insufficient balance");
         payable(msg.sender).transfer(amount);
+    }
+
+    function withdrawAllBNB() external onlyOwner {
+        uint256 availableBNB = address(this).balance - totalBNBOwedToReferrers;
+        require(availableBNB > 0, "No BNB available to withdraw");
+        payable(msg.sender).transfer(availableBNB);
     }
 
     function withdrawTokens(address _tokenAddress, uint256 _amount)
@@ -387,18 +461,24 @@ contract IQpoyPresale is Ownable {
         tokenAddress.transfer(owner(), _amount);
     }
 
-    function calcStake(address user,uint index) public view returns (uint256) {
+    function calcStake(address user, uint256 index)
+        public
+        view
+        returns (uint256)
+    {
         // if (stake[user].startTimestamp == 0) {
         //     return 0;
         // }
 
-        uint256 amountA = userPurchases[user][index].buyToken;
-//        uint256 amountB = getUserAirdrop(user);
-//        uint256 amount = (amountA + amountB);
+        uint256 amountA = userPurchases[user][index].buyToken -
+            userPurchases[user][index].unlockTokenAmount;
+        //        uint256 amountB = getUserAirdrop(user);
+        //        uint256 amount = (amountA + amountB);
 
-        uint256 monthsPassed = (block.timestamp - userPurchases[user][index].tokenLockTime) / 60;
+        uint256 monthsPassed = (block.timestamp -
+            userPurchases[user][index].tokenLockTime) / 60;
         uint256 totalUnlockable = (amountA * 2 * monthsPassed) / 100;
-        uint256 usStakeAble = totalUnlockable - userPurchases[user][index].unlockTokenAmount;
+        uint256 usStakeAble = totalUnlockable;
 
         if (usStakeAble == 0) {
             return 0;
