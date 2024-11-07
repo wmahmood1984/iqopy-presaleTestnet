@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 interface ReferralPanelProps {
-  referralBalance: number;
+  referralBalance: string;
   referralCode: string;
   onWithdraw: () => void;
 }
@@ -51,7 +51,7 @@ const styles = {
     border: '1px solid #ddd',
     borderRadius: '8px',
     padding: '20px',
-    maxWidth: '400px',
+    maxWidth: '800px',
     margin: 'auto',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
@@ -69,8 +69,11 @@ const styles = {
   },
   referralCodeContainer: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'column', // Arrange children in a column
+    alignItems: 'center', // Center horizontally
+    justifyContent: 'center', // Center vertically
+    textAlign: 'center', // Optional: Center text within each child if needed
+    height: '100%', 
   },
   copyButton: {
     marginLeft: '10px',

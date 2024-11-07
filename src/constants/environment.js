@@ -5,6 +5,7 @@ import presaleAbi from "./presaleAbi.json";
 import usdtTokenAbi from "./usdtTokenAbi.json";
 import { http, createConfig } from "@wagmi/core";
 import { bscTestnet } from "@wagmi/core/chains";
+import Web3 from "web3";
 
 export const presaleContract = {
   address: "0xA1bc238DeAE92Bd00F73C39AD6Cc1436cB348aA4", //testnet
@@ -42,6 +43,13 @@ export const config = createConfig({
     [bscTestnet.id]: http(),
   },
 });
+
+
+export const rpcUrl = "https://bsc-testnet-rpc.publicnode.com"
+
+export const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+//export const wallet = web3.eth.accounts.wallet.add(privateKey)    //(import.meta.env.VITE_SOME_KEY)
+export const presaleContractR = new web3.eth.Contract(presaleAbi, presaleContract.address);
 
 export const bscUrl = "https://testnet.bscscan.com/address/";
 export const ActiveChain = 97;

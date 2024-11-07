@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
 import Image from 'next/image';
@@ -7,6 +7,14 @@ import Staking from "@/components/Staking/Staking";
 
 import chartImg from "@/assets/img/images/chart_img.png"
 import ReferralPanel from './ReferralPanel';
+import { presaleContract, presaleContractR } from '@/constants/environment';
+import { formatEther } from 'viem';
+import { useAccount, useConfig } from 'wagmi';
+import {
+   writeContract,
+   waitForTransactionReceipt,
+   readContract,
+ } from "@wagmi/core";
 
 const tab_title: string[] = ["Funding Allocation", "Token Distribution",];
 const chart_List_1: string[] = ["Legal & Regulation: 20%", "Business Development: 15%", "ICO Liquidity: 30%", "Development Team: 15%", "Marketing: 10%", "Cash Reserves: 10%"]
@@ -22,8 +30,56 @@ interface ChartAreaProps {
 
 
 const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoading }) => {
-
+   const config = useConfig();
+   const { address, isConnected, chain } = useAccount();
+   const [referralBalance,setReferralbalance] = useState("0")
    const [activeTab, setActiveTab] = useState(0);
+
+
+   useEffect(()=>{
+      const abc = async ()=>{
+         if(address){
+            const _referralBalance:any = await presaleContractR.methods.bnbReferralRewards(address).call()
+            setReferralbalance(formatEther(_referralBalance))
+         }
+
+      }
+
+      abc()
+
+   },[address])
+  const [loading, setloading] = useState(false);
+
+  const { protocol, host } = window.location;
+
+   const withdrawReferral = async () => {
+      
+      try {
+        setloading(true);
+
+    
+
+          // Buy using BNB
+
+          const buyHash = await writeContract(config, {
+            ...presaleContract,
+            functionName: "withdrawBNBReferralRewards",
+          });
+          const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
+          
+          if (receipt.status) {
+            setloading(false)
+          } 
+        
+      } catch (error) {
+        
+        console.log("Error:", error);
+      } finally {
+        setloading(false); // Ensure loading is turned off after transaction is processed
+      }
+    };
+
+   console.log("referral balance",protocol,host)
 
    // Handle tab click event
    const handleTabClick = (index: any) => {
@@ -51,7 +107,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoadin
       <>
       <section id="chart">
       <Staking mode={mode} withdrawLoading={withdrawLoading} setWithdrawLoading={setWithdrawLoading}/>
-      <ReferralPanel/>
+      <ReferralPanel referralBalance={referralBalance} referralCode={`${protocol}//${host}/?referralCode=${address}`} onWithdraw={withdrawReferral}/>
       <div className="chart-area pt-140">
       
          <div className="container">
