@@ -29,14 +29,14 @@ const ReferralPanel: React.FC<ReferralPanelProps> = ({ referralBalance, referral
       </div>
 
       <div style={styles.section}>
-        <button onClick={onWithdraw} style={styles.withdrawButton}>Withdraw BNB</button>
+        <button onClick={onWithdraw} className='btn'>Withdraw BNB</button>
       </div>
 
       <div style={styles.section}>
         <label>Your Referral Code:</label>
         <div style={styles.referralCodeContainer}>
           <span>{referralCode}</span>
-          <button onClick={copyReferralCode} style={styles.copyButton}>
+          <button onClick={copyReferralCode} className='btn'>
             {isCopied ? 'Copied!' : 'Copy'}
           </button>
         </div>
