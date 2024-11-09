@@ -1,7 +1,7 @@
 // pages/referral.js
-
+"use client"
 import { useState } from 'react';
-import ReferralPanel from '../components/ReferralPanel';
+import ReferralPanel from "../../components/home/ReferralPanel" //  '../components/home/ReferralPanel';
 
 export default function ReferralPage() {
   const [referralBalance, setReferralBalance] = useState(0.5); // Example balance in BNB

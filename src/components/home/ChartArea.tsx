@@ -62,7 +62,9 @@ const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoadin
           // Buy using BNB
 
           const buyHash = await writeContract(config, {
-            ...presaleContract,
+            //...presaleContract,
+            address:"0xA1bc238DeAE92Bd00F73C39AD6Cc1436cB348aA4",
+            abi:presaleContract.abi,
             functionName: "withdrawBNBReferralRewards",
           });
           const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
