@@ -48,9 +48,18 @@ const ChartArea: React.FC<ChartAreaProps> = ({withdrawLoading, setWithdrawLoadin
       abc()
 
    },[address])
+
+   const [protocol, setProtocol] = useState("");
+const [host, setHost] = useState("");
+
   const [loading, setloading] = useState(false);
 
-  const { protocol, host } = window.location;
+  useEffect(() => {
+   if (typeof window !== "undefined") {
+     setProtocol(window.location.protocol);
+     setHost(window.location.host);
+   }
+ }, []);
 
    const withdrawReferral = async () => {
       

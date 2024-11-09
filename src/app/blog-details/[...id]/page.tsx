@@ -6,7 +6,9 @@ import Wrapper from "@/layout/Wrapper";
 export const metadata = {
    title: "Blog Details iQopy | Smart's Money Edge",
 };
-const index = ({ params }: { params: { id: number } }) => {
+const index = ({ params }:any 
+  // { params: { id: number } }
+) => {
 
    const single_blog = blog_data.find((item) => Number(item.id) === Number(params.id));
 
