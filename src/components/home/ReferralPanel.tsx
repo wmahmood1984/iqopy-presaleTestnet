@@ -73,7 +73,7 @@ const styles = {
     alignItems: 'center', // Center horizontally
     justifyContent: 'center', // Center vertically
     textAlign: 'center', // Optional: Center text within each child if needed
-    height: '100%', 
+    height: '100%', //
   },
   copyButton: {
     marginLeft: '10px',
