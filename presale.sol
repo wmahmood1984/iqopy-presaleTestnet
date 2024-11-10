@@ -335,13 +335,13 @@ contract IQpoyPresale is Ownable {
 
         UserInfo[] storage purchases = userPurchases[msg.sender];
         require(index < purchases.length, "Invalid index");
-
-        token.transfer(msg.sender, unlockableTokens);
+        uint tokenToTransfer = unlockableTokens - purchases[index].unlockTokenAmount;
+        token.transfer(msg.sender, tokenToTransfer);
 
         purchases[index].unlockTokenAmount = unlockableTokens;
-        userBalance[msg.sender] -= unlockableTokens;
+        userBalance[msg.sender] -= tokenToTransfer;
 
-        emit TokensVested(msg.sender, unlockableTokens);
+        emit TokensVested(msg.sender, tokenToTransfer);
     }
 
     function busdToToken(uint256 _amount) public view returns (uint256) {

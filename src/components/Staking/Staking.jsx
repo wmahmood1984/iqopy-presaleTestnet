@@ -279,7 +279,7 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
     var interval = setInterval(() => {
       init();
       init2()      
-    }, 60000);
+    }, 30000);
 
     if(!started){
       init2()

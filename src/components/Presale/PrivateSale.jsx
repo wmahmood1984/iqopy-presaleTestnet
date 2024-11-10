@@ -203,6 +203,7 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
             error: false,
             message: "Purchase successfully completed with BNB.",
           });
+          setloading(false)
         } else {
           setnotificationProps({
             ...notificationProps,
@@ -210,6 +211,7 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
             error: true,
             message: "Transaction failed during BNB purchase.",
           });
+          setloading(false)
         }
       } else {
         // Buy using USDT
