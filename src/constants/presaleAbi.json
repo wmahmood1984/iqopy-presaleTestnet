@@ -33,31 +33,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "numberOfTokens",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			}
-		],
-		"name": "privateSale",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "contract IToken",
 				"name": "_token",
 				"type": "address"
@@ -86,6 +61,31 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "numberOfTokens",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			}
+		],
+		"name": "privateSale",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -105,6 +105,13 @@
 		"type": "event"
 	},
 	{
+		"inputs": [],
+		"name": "setListedOnExchange",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -113,6 +120,13 @@
 			}
 		],
 		"name": "setTokenPrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "setTradingStart",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -392,6 +406,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "ExchangeListed",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getLatestPricebnb",
 		"outputs": [
 			{
@@ -546,6 +573,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "presaleStartTime",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "priceFeedbnb",
 		"outputs": [
 			{
@@ -638,6 +678,19 @@
 	{
 		"inputs": [],
 		"name": "totalBNBOwedToReferrers",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tradingStart",
 		"outputs": [
 			{
 				"internalType": "uint256",
