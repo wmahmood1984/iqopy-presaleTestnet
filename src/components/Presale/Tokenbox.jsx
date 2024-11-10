@@ -102,7 +102,7 @@ const Tokenbox = ({
               </Box>
             </Box>
           </MenuItem>
-          <MenuItem
+          {/* <MenuItem
             onClick={() => {
               handleClose();
               setslect("BUSD");
@@ -130,7 +130,7 @@ const Tokenbox = ({
                 BUSD
               </Box>
             </Box>
-          </MenuItem>
+          </MenuItem> */}
         </Menu>
       </Box>
       <Box

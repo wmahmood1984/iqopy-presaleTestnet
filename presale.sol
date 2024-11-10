@@ -166,6 +166,7 @@ contract IQpoyPresale is Ownable {
 
     struct UserInfo {
         uint256 buyToken;
+        uint256 unlockabletoken;
         uint256 unlockTokenAmount;
         uint256 tokenLockTime;
         uint256 rewardDistributed;
@@ -232,7 +233,7 @@ contract IQpoyPresale is Ownable {
 
         // Record the buyer's purchase with vesting details
         UserInfo memory newPurchase = UserInfo(
-            numberOfTokens,
+            numberOfTokens,0,
             0,
             block.timestamp,
             0,
@@ -254,7 +255,7 @@ contract IQpoyPresale is Ownable {
 
             // Record the referrer's token reward with vesting details
             UserInfo memory referrerReward = UserInfo(
-                tokenReferralReward,
+                tokenReferralReward,0,
                 0,
                 block.timestamp,
                 0,
@@ -286,7 +287,7 @@ contract IQpoyPresale is Ownable {
         emit Sell(_user, numberOfTokens);
 
         UserInfo memory newPurchase = UserInfo(
-            numberOfTokens,
+            numberOfTokens,0,
             0,
             block.timestamp,
             0,
@@ -336,7 +337,7 @@ contract IQpoyPresale is Ownable {
         UserInfo[] storage purchases = userPurchases[msg.sender];
         require(index < purchases.length, "Invalid index");
         uint tokenToTransfer = unlockableTokens - purchases[index].unlockTokenAmount;
-        token.transfer(msg.sender, tokenToTransfer);
+        token.transferFrom(owner(),msg.sender, tokenToTransfer);
 
         purchases[index].unlockTokenAmount = unlockableTokens;
         userBalance[msg.sender] -= tokenToTransfer;
@@ -402,6 +403,7 @@ contract IQpoyPresale is Ownable {
 
         for (uint256 i = 0; i < userPurchases[_user].length; i++) {
             userInfo[i] = UserInfo(
+                userPurchases[_user][i].buyToken,
                 calculateUnlockable(_user,i),
                 userPurchases[_user][i].unlockTokenAmount,
                 userPurchases[_user][i].tokenLockTime,
