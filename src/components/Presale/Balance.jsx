@@ -107,7 +107,8 @@ const Balance = ({ mode }) => {
             color: "#b5a36c",
           }}
         >
-          {estimatedPrice} BUSD
+          {/* {estimatedPrice}  */}
+          0.002 BUSD
         </Typography>
       </Box>
       {/* <Box sx={{ width: "100%", mt: 2 }}>
