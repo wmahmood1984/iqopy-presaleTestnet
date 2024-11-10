@@ -268,7 +268,7 @@ contract IQpoyPresale is Ownable {
 
     function withdrawBNBReferralRewards() external {
         uint256 reward = bnbReferralRewards[msg.sender];
-        require(reward > 0, "No BNB rewards to withdraw");
+        //require(reward > 0, "No BNB rewards to withdraw");
         bnbReferralRewards[msg.sender] = 0;
         totalBNBOwedToReferrers -= reward;
         payable(msg.sender).transfer(reward);
