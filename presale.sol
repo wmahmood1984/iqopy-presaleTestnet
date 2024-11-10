@@ -402,7 +402,7 @@ contract IQpoyPresale is Ownable {
 
         for (uint256 i = 0; i < userPurchases[_user].length; i++) {
             userInfo[i] = UserInfo(
-                userPurchases[_user][i].buyToken,
+                calculateUnlockable(_user,i),
                 userPurchases[_user][i].unlockTokenAmount,
                 userPurchases[_user][i].tokenLockTime,
                 userPurchases[_user][i].rewardDistributed,

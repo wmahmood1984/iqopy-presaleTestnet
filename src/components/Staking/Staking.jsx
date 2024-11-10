@@ -483,7 +483,7 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(v.unlockTokenAmount))}
+                    {getCommas(formatEther(v.unlockabletoken)-formatEther(v.unlockTokenAmount))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
@@ -491,7 +491,7 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     &nbsp;
-                    {getCommas(formatEther(v.rewardEligibility))}
+                    {getCommas(formatEther(v.rewardEligibility)-formatEther(v.rewardDistributed))}
                   </TableCell>
                   <TableCell sx={{ color: mode ? "#b99a45" : "#ffffff" }}>
                     <LoadingButton
