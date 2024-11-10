@@ -131,6 +131,8 @@ interface IToken {
     function decimals() external view returns (uint8);
 
     function approve(address _spender, uint256 _amount) external returns (bool);
+
+
 }
 
 interface AggregatorV3Interface {
@@ -152,6 +154,8 @@ contract IQpoyPresale is Ownable {
 
     mapping(address => uint256) public bnbReferralRewards;
     uint256 public totalBNBOwedToReferrers;
+    uint public tradingStart;
+    uint public ExchangeListed;
 
     AggregatorV3Interface public priceFeedbnb;
 
@@ -159,10 +163,11 @@ contract IQpoyPresale is Ownable {
     uint256 public amountRaisedBUSD;
     uint256 public rewardLimit = 200000000 * (10**18);
     uint256 public rewardDistributed;
+    uint256 public presaleStartTime ;
 
     uint256 public tokenPrice;
     uint256 public tokensSold;
-    bool public presaleActive = true;
+
 
     struct UserInfo {
         uint256 buyToken;
@@ -177,7 +182,7 @@ contract IQpoyPresale is Ownable {
     mapping(address => uint256) public userBalance;
 
     uint256 public LOCK_PERIOD = 300;
-    uint256 public MONTHLY_UNLOCK_PERCENT = 2;
+    uint256 public MONTHLY_UNLOCK_PERCENT = 5;
 
     event Sell(address indexed buyer, uint256 amount);
     event TokensVested(address indexed beneficiary, uint256 amount);
@@ -205,13 +210,6 @@ contract IQpoyPresale is Ownable {
         return userBalance[user];
     }
 
-    function startPresale() external onlyOwner {
-        presaleActive = true;
-    }
-
-    function stopPresale() external onlyOwner {
-        presaleActive = false;
-    }
 
     function setTokenPrice(uint256 _tokenPrice) external onlyOwner {
         tokenPrice = _tokenPrice;
@@ -222,7 +220,7 @@ contract IQpoyPresale is Ownable {
     }
 
     function buyTokenBNB(address referrer) external payable {
-        require(presaleActive, "Presale is not active");
+        require(presaleStartTime>0, "Presale is not active");
         require(msg.value > 0, "Invalid amount");
         uint256 numberOfTokens = bnbToToken(msg.value);
         uint256 tokenValue = tokenForSale();
@@ -306,30 +304,7 @@ contract IQpoyPresale is Ownable {
         }
     }
 
-    // function buyTokenbusd(uint256 _amount) public {
-    //     uint256 numberOfTokens = busdToToken(_amount);
-    //     uint256 tokenValue = tokenForSale();
-    //     require(tokenValue >= numberOfTokens, "Insufficient tokens for sale");
-
-    //     BUSD.transferFrom(msg.sender, address(this), _amount);
-
-    //     amountRaisedBUSD += _amount;
-
-    //     tokensSold += numberOfTokens;
-    //     //token.transferFrom(owner(), msg.sender, numberOfTokens);
-
-    //     emit Sell(msg.sender, numberOfTokens);
-
-    //     UserInfo memory newPurchase = UserInfo(
-    //         numberOfTokens,
-    //         0,
-    //         block.timestamp
-    //     );
-    //     userPurchases[msg.sender].push(newPurchase);
-    //     userBalance[msg.sender] += numberOfTokens;
-    // }
-
-    function unlockVestedTokens(uint256 index) external {
+      function unlockVestedTokens(uint256 index) external {
         uint256 unlockableTokens = calculateUnlockable(msg.sender, index);
 
         require(unlockableTokens > 0, "No tokens to unlock yet");
@@ -363,7 +338,7 @@ contract IQpoyPresale is Ownable {
         view
         returns (uint256)
     {
-        if (!presaleActive) {
+        if (presaleStartTime==0) {
             return 0;
         }
 
@@ -371,14 +346,18 @@ contract IQpoyPresale is Ownable {
         require(index < purchases.length, "Invalid index");
 
         uint256 vested = purchases[index].buyToken;
-        uint256 lockTime = purchases[index].tokenLockTime;
+        uint256 lockTimeInd = purchases[index].tokenLockTime-presaleStartTime ;
         uint256 currentTimestamp = block.timestamp;
 
-        if (lockTime + LOCK_PERIOD > currentTimestamp) {
+        if (ExchangeListed<block.timestamp) {
             return 0;
         }
 
-        uint256 elapsedMonths = (currentTimestamp - (lockTime + LOCK_PERIOD)) /
+        if(lockTimeInd>(currentTimestamp - ExchangeListed)){
+            return 0;
+        }
+
+        uint256 elapsedMonths = (currentTimestamp - ExchangeListed-lockTimeInd) /
             60;
         // 30 days;
         uint256 totalUnlockable = (vested *
@@ -487,5 +466,13 @@ contract IQpoyPresale is Ownable {
         }
 
         return usStakeAble;
+    }
+
+    function setTradingStart() public onlyOwner {
+        presaleStartTime  = block.timestamp;
+    }
+
+    function setListedOnExchange() public onlyOwner {
+        ExchangeListed = block.timestamp;
     }
 }
