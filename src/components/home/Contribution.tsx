@@ -61,7 +61,7 @@ const Contribution: React.FC<ContributionProps> = ({withdrawLoading}) => {
                      <div className="progress" role="progressbar">
                         <div className="progress-bar" style={{ width: progressBarWidth }}></div>
                      </div>
-                     <h6 className="progress-title"> {progressBarWidth} target raised <span>$ 1 = 2,000 IQO</span></h6>
+                     <h6 className="progress-title"> {progressBarWidth} target raised <span>$ 1 = 1,000 IQO</span></h6>
                   </div>
                   <div className="contribution-btn">
                      <Link href="/register" className="btn">Purchase a Token</Link>
