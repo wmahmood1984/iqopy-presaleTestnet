@@ -168,8 +168,8 @@ const [host, setHost] = useState("");
                            <li><span>1</span>Symbol: IQO</li>
                            <li><span>2</span>Network: BEP20</li>
                            <li><span>3</span>Total Supply: 1,000,000,000</li>
-                           <li className="selected"><span>4</span><strong>Private Sale: $ 1 = 2,000 IQO</strong></li>
-                           <li><span>5</span>Presale: $ 1 = 1,000 IQO</li>
+                           <li ><span>4</span><strong>Private Sale: $ 1 = 2,000 IQO</strong></li>
+                           <li className="selected"><span>5</span>Presale: $ 1 = 1,000 IQO</li>
                            <li><span>6</span>ICO: $ 1 = 500 IQO</li>
                         </ul>
                      </div>
