@@ -181,7 +181,7 @@ const Staking = ({ mode,withdrawLoading,setWithdrawLoading }) => {
       setWithdrawLoading(true);
       let withdrawHash = await writeContract(config, {
         ...presaleContract,
-        functionName: "withdraw",
+        functionName: "unlockVestedTokens",
         args: [index]
       });
       await waitForTransactionReceipt(config, { hash: withdrawHash });
