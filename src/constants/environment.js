@@ -33,7 +33,7 @@ export const usdtContract = {
   abi: usdtTokenAbi,
 };
 export const tokenContract = {
-  address: "0x3fcb590b16003bF8326B27EfD806c53a6368419b", //testnet
+  address: "0x4eeaee5b9998306cb9524385e2b9c5757f142d63", //testnet
   abi: tokenAbi,
 };
 
