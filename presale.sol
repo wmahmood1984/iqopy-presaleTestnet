@@ -165,8 +165,8 @@ contract IQpoyPresale is Ownable {
     uint256 public rewardLimit = 200000000 * (10**18);
     uint256 public rewardDistributed;
     uint256 public presaleStartTime ;
-    uint           oneYear = 60*1;  //*60*24*365;
-    uint           oneMonth = 30;
+    uint           oneYear = 60*60*24*365;
+    uint           oneMonth = 60*60*24*30;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 

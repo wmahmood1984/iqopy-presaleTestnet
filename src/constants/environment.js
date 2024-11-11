@@ -4,11 +4,11 @@ import airdropAbi from "./airdropAbi.json";
 import presaleAbi from "./presaleAbi.json";
 import usdtTokenAbi from "./usdtTokenAbi.json";
 import { http, createConfig } from "@wagmi/core";
-import { bscTestnet } from "@wagmi/core/chains";
+import { bscTestnet,bsc } from "@wagmi/core/chains";
 import Web3 from "web3";
 
 export const presaleContract = {
-  address: "0x38d4C5921E895D198318f60a5247C90a22ecC9dE", //testnet
+  address: "0x4aD44B635eceDEf46Fb446749071ea2834F6dF3A", //testnet
   abi: presaleAbi,
 };
 export const airdropContract = {
@@ -38,21 +38,21 @@ export const tokenContract = {
 };
 
 export const config = createConfig({
-  chains: [bscTestnet],
+  chains: [bsc],
   transports: {
-    [bscTestnet.id]: http(),
+    [bsc.id]: http(),
   },
 });
 
 
-export const rpcUrl = "https://bsc-testnet-rpc.publicnode.com"
+export const rpcUrl = "https://bsc-rpc.publicnode.com"//"https://bsc-testnet-rpc.publicnode.com"
 
 export const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
 //export const wallet = web3.eth.accounts.wallet.add(privateKey)    //(import.meta.env.VITE_SOME_KEY)
 export const presaleContractR = new web3.eth.Contract(presaleAbi, presaleContract.address);
 
-export const bscUrl = "https://testnet.bscscan.com/address/";
-export const ActiveChain = 97;
+export const bscUrl = "https://bscscan.com/address/";
+export const ActiveChain = 56;
 export let getSliceAddress = (address) =>
   address?.slice(0, 4) + "..." + address?.slice(-4);
 export const getCommas = (value, percision = 2) => {
