@@ -165,7 +165,8 @@ contract IQpoyPresale is Ownable {
     uint256 public rewardLimit = 200000000 * (10**18);
     uint256 public rewardDistributed;
     uint256 public presaleStartTime ;
-
+    uint           oneYear = 60*2;  //*60*24*365;
+    uint           oneMonth = 60;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
@@ -348,18 +349,28 @@ contract IQpoyPresale is Ownable {
 
         uint256 vested = purchases[index].buyToken;
         uint256 lockTimeInd = purchases[index].tokenLockTime-presaleStartTime ;
-        uint256 currentTimestamp = block.timestamp;
+        
 
-        if (ExchangeListed<block.timestamp) {
+        uint256 elapsedMonths;
+
+
+
+        if (ExchangeListed==0) {
             return 0;
         }
 
-        if(lockTimeInd>(currentTimestamp - ExchangeListed)){
-            return 0;
+        if((ExchangeListed+oneYear)>block.timestamp){
+            elapsedMonths = 0;
+        }else if((ExchangeListed+oneYear+lockTimeInd)>block.timestamp) {
+            elapsedMonths = 0;
+        }else{
+            elapsedMonths = (block.timestamp - (ExchangeListed+oneYear+lockTimeInd))/oneMonth;
         }
 
-        uint256 elapsedMonths = (currentTimestamp - ExchangeListed-lockTimeInd) /
-            60;
+
+
+        // uint256 elapsedMonths = (currentTimestamp - ExchangeListed-lockTimeInd) /
+        //     60;
         // 30 days;
         uint256 totalUnlockable = (vested *
             MONTHLY_UNLOCK_PERCENT *
@@ -461,7 +472,7 @@ contract IQpoyPresale is Ownable {
         uint lockTimeInd = userPurchases[user][index].tokenLockTime;
 
 
-        if (ExchangeListed<block.timestamp) {
+        if (ExchangeListed==0) {
             return 0;
         }
 
@@ -471,7 +482,7 @@ contract IQpoyPresale is Ownable {
         }
 
         uint256 monthsPassed = (currentTimestamp - ExchangeListed-lockTimeInd) /
-            60;
+            oneMonth;
 
        
         uint256 totalUnlockable = (amountA * 2 * monthsPassed) / 100;
