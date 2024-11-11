@@ -457,8 +457,23 @@ contract IQpoyPresale is Ownable {
         //        uint256 amountB = getUserAirdrop(user);
         //        uint256 amount = (amountA + amountB);
 
-        uint256 monthsPassed = (block.timestamp -
-            userPurchases[user][index].tokenLockTime) / 60;
+         uint256 currentTimestamp = block.timestamp;
+        uint lockTimeInd = userPurchases[user][index].tokenLockTime;
+
+
+        if (ExchangeListed<block.timestamp) {
+            return 0;
+        }
+
+
+        if(lockTimeInd>(currentTimestamp - ExchangeListed)){
+            return 0;
+        }
+
+        uint256 monthsPassed = (currentTimestamp - ExchangeListed-lockTimeInd) /
+            60;
+
+       
         uint256 totalUnlockable = (amountA * 2 * monthsPassed) / 100;
         uint256 usStakeAble = totalUnlockable;
 
