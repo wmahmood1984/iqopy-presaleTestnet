@@ -155,7 +155,7 @@ contract IQpoyPresale is Ownable {
 
     mapping(address => uint256) public bnbReferralRewards;
     uint256 public totalBNBOwedToReferrers;
-    uint public tradingStart;
+
     uint public ExchangeListed;
 
     AggregatorV3Interface public priceFeedbnb;
@@ -165,8 +165,8 @@ contract IQpoyPresale is Ownable {
     uint256 public rewardLimit = 200000000 * (10**18);
     uint256 public rewardDistributed;
     uint256 public presaleStartTime ;
-    uint           oneYear = 60*2;  //*60*24*365;
-    uint           oneMonth = 60;
+    uint           oneYear = 60*1;  //*60*24*365;
+    uint           oneMonth = 30;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
@@ -340,9 +340,7 @@ contract IQpoyPresale is Ownable {
         view
         returns (uint256)
     {
-        if (presaleStartTime==0) {
-            return 0;
-        }
+       
 
         UserInfo[] storage purchases = userPurchases[beneficiary];
         require(index < purchases.length, "Invalid index");
@@ -469,7 +467,7 @@ contract IQpoyPresale is Ownable {
         //        uint256 amount = (amountA + amountB);
 
          uint256 currentTimestamp = block.timestamp;
-        uint lockTimeInd = userPurchases[user][index].tokenLockTime;
+        uint256 lockTimeInd = userPurchases[user][index].tokenLockTime-presaleStartTime ;
 
 
         if (ExchangeListed==0) {
