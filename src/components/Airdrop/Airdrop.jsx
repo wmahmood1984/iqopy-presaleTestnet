@@ -58,7 +58,7 @@ const Airdrops = ({ mode }) => {
   }, [address, config]);
 
   useEffect(() => {
-    init();
+  //  init();
   }, [address, init]);
 
   const [freezedAmount, claimedAmount, startTime] = airdropDetails;

@@ -10,6 +10,8 @@ import { useAccount, useConfig, useSwitchChain } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import NotificationModal from "../NotificationModal/NotificationModal";
 
+import { bscTestnet,bsc } from "@wagmi/core/chains";
+
 import {
   ActiveChain,
   owner,
@@ -24,8 +26,8 @@ import {
   readContract,
 } from "@wagmi/core";
 import CommonButton from "../CommonButton";
-const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
-  console.log("presaletab",referralCode)
+const PrivateSale = ({ mode, loading, setloading, referralCode }) => {
+  console.log("presaletab", referralCode);
   const { address, isConnected, chain } = useAccount();
   const { open } = useWeb3Modal();
   const { switchChain } = useSwitchChain();
@@ -33,7 +35,7 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
   const [wbamount, setwbamount] = useState("");
   const [onebnb, setonebnb] = useState("");
   const [onebusd, setOneBUSD] = useState("");
-//  const [loading, setloading] = useState(false);
+  //  const [loading, setloading] = useState(false);
   const config = useConfig();
   const [notificationProps, setnotificationProps] = useState({
     error: "",
@@ -78,7 +80,7 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
   };
 
   useEffect(() => {
-    init();
+    //init();
   }, []);
 
   useEffect(() => {
@@ -169,7 +171,6 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
   //   }
   // };
 
-
   const buytokens = async () => {
     if (!amount || isNaN(amount) || amount <= 0) {
       setnotificationProps({
@@ -180,22 +181,24 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
       });
       return;
     }
-  
+
     try {
       setloading(true);
       console.log("amountCD", amount);
-  
-      if (slect === "BNB") {
+
+      //if (slect === "BNB") {
         // Buy using BNB
-        const args = referralCode? referralCode : owner
+        const args = referralCode ? referralCode : owner;
         const buyHash = await writeContract(config, {
           ...presaleContract,
           functionName: "buyTokenBNB",
           value: parseUnits(amount.toString(), 18),
-          args:[args],
+          args: [args],
         });
-        const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
-        
+        const receipt = await waitForTransactionReceipt(config, {
+          hash: buyHash,
+        });
+
         if (receipt.status) {
           setnotificationProps({
             ...notificationProps,
@@ -203,7 +206,7 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
             error: false,
             message: "Purchase successfully completed with BNB.",
           });
-          setloading(false)
+          setloading(false);
         } else {
           setnotificationProps({
             ...notificationProps,
@@ -211,40 +214,42 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
             error: true,
             message: "Transaction failed during BNB purchase.",
           });
-          setloading(false)
+          setloading(false);
         }
-      } else {
-        // Buy using USDT
-        const approveHash = await writeContract(config, {
-          ...usdtContract,
-          functionName: "approve",
-          args: [presaleContract.address, parseUnits(amount.toString(), 18)],
-        });
-        await waitForTransactionReceipt(config, { hash: approveHash });
-  
-        const buyHash = await writeContract(config, {
-          ...presaleContract,
-          functionName: "buyTokenbusd",
-          args: [parseUnits(amount.toString(), 18)],
-        });
-        const receipt = await waitForTransactionReceipt(config, { hash: buyHash });
-  
-        if (receipt.status) {
-          setnotificationProps({
-            ...notificationProps,
-            modal: true,
-            error: false,
-            message: "Purchase successfully completed with USDT.",
-          });
-        } else {
-          setnotificationProps({
-            ...notificationProps,
-            modal: true,
-            error: true,
-            message: "Transaction failed during USDT purchase.",
-          });
-        }
-      }
+      // } else {
+      //   // Buy using USDT
+      //   const approveHash = await writeContract(config, {
+      //     ...usdtContract,
+      //     functionName: "approve",
+      //     args: [presaleContract.address, parseUnits(amount.toString(), 18)],
+      //   });
+      //   await waitForTransactionReceipt(config, { hash: approveHash });
+
+      //   const buyHash = await writeContract(config, {
+      //     ...presaleContract,
+      //     functionName: "buyTokenbusd",
+      //     args: [parseUnits(amount.toString(), 18)],
+      //   });
+      //   const receipt = await waitForTransactionReceipt(config, {
+      //     hash: buyHash,
+      //   });
+
+      //   if (receipt.status) {
+      //     setnotificationProps({
+      //       ...notificationProps,
+      //       modal: true,
+      //       error: false,
+      //       message: "Purchase successfully completed with USDT.",
+      //     });
+      //   } else {
+      //     setnotificationProps({
+      //       ...notificationProps,
+      //       modal: true,
+      //       error: true,
+      //       message: "Transaction failed during USDT purchase.",
+      //     });
+      //   }
+      // }
     } catch (error) {
       setnotificationProps({
         ...notificationProps,
@@ -257,7 +262,9 @@ const PrivateSale = ({ mode,loading,setloading,referralCode }) => {
       setloading(false); // Ensure loading is turned off after transaction is processed
     }
   };
-  
+
+
+  console.log("chains",config)
   return (
     <div>
       <NotificationModal

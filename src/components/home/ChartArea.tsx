@@ -72,7 +72,7 @@ const [host, setHost] = useState("");
 
           const buyHash = await writeContract(config, {
             //...presaleContract,
-            address:"0x4aD44B635eceDEf46Fb446749071ea2834F6dF3A",
+            address:"0x6C963D1F69bda3657112C9a688240364cf61F39c",
             abi:presaleContract.abi,
             functionName: "withdrawBNBReferralRewards",
           });

@@ -8,7 +8,7 @@ import { bscTestnet,bsc } from "@wagmi/core/chains";
 import Web3 from "web3";
 
 export const presaleContract = {
-  address: "0x4aD44B635eceDEf46Fb446749071ea2834F6dF3A", //testnet
+  address: "0x6C963D1F69bda3657112C9a688240364cf61F39c", //testnet
   abi: presaleAbi,
 };
 export const airdropContract = {

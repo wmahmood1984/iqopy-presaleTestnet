@@ -19,7 +19,7 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-const chains = [bscTestnet,bsc];
+const chains = [bsc];
 const config = defaultWagmiConfig({
   chains,
   projectId,
@@ -35,6 +35,8 @@ createWeb3Modal({
 });
 
 export function Web3ModalProvider({ children }) {
+
+  console.log("chains in wagmi",bsc)
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
