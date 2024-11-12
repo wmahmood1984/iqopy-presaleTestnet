@@ -165,6 +165,7 @@ contract IQpoyPresale is Ownable {
     uint256 public rewardLimit = 200000000 * (10**18);
     uint256 public rewardDistributed;
     uint256 public presaleStartTime ;
+    bool    public presaleActive;
     uint           oneYear = 60*60*24*365;
     uint           oneMonth = 60*60*24*30;
     uint256 public tokenPrice;
@@ -196,7 +197,8 @@ contract IQpoyPresale is Ownable {
 
     constructor(IToken _token) {
         priceFeedbnb = AggregatorV3Interface(
-            0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE//0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526
+            0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526    //Testnet
+            //0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE  //Mainnet 
         );
         //BUSD = IToken(0x35BD1509a00CE3D6a7969A97cB075e0086A943cB);
         token = _token;
@@ -222,7 +224,7 @@ contract IQpoyPresale is Ownable {
     }
 
     function buyTokenBNB(address referrer) external payable {
-        require(presaleStartTime>0, "Presale is not active");
+        require(presaleActive, "Presale is not active");
         require(msg.value > 0, "Invalid amount");
         uint256 numberOfTokens = bnbToToken(msg.value);
         uint256 tokenValue = tokenForSale();
@@ -495,6 +497,12 @@ contract IQpoyPresale is Ownable {
 
     function setTradingStart() public onlyOwner {
         presaleStartTime  = block.timestamp;
+        presaleActive = true;
+    }
+
+    function stopPreSale() public onlyOwner {
+
+        presaleActive = false;
     }
 
     function setListedOnExchange() public onlyOwner {

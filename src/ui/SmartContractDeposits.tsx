@@ -15,7 +15,7 @@ const contractABI: AbiItem[] = PresaleAbi;
 // Initialize web3 with the URL of your Ethereum node
 //const web3 = new Web3('https://rpc.ankr.com/bsc'); // replace with your node URL
 
-export const web3 = new Web3(bsc.rpcUrls.default.http[0])
+export const web3 = new Web3(bscTestnet.rpcUrls.default.http[0])
 
 // Create a new contract instance with the contract address and ABI
 export const contract = new web3.eth.Contract(PresaleAbi, presaleContract.address);

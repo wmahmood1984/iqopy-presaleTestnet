@@ -19,7 +19,7 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-const chains = [bsc];
+const chains = [bscTestnet];
 const config = defaultWagmiConfig({
   chains,
   projectId,
